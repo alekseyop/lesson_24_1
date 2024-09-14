@@ -6,5 +6,7 @@ router = DefaultRouter()
 router.register(r"users", UsersViewSet)  # Регистрируем ViewSet для пользователей
 
 urlpatterns = [
-    path("", include(router.urls)),  # Подключаем маршруты API для курсов и пользователей
+    path(
+        "", include(router.urls)
+    ),  # Подключаем маршруты API для курсов и пользователей
 ]
