@@ -20,14 +20,13 @@ class CourseSerializer(ModelSerializer):
     def get_lessons_count(self, obj):
         return obj.lessons.count()  # Подсчет количества связанных уроков
 
-
-class Meta:
-    model = Course
-    fields = [
-        "id",
-        "title",
-        "preview",
-        "description",
-        "lessons_count",
-        "lessons",
-    ]  # Указываем новое поле в fields
+    class Meta:
+        model = Course
+        fields = [
+            "id",
+            "title",
+            "preview",
+            "description",
+            "lessons_count",
+            "lessons",
+        ]  # Указываем новое поле в fields

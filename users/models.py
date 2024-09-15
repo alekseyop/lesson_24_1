@@ -8,7 +8,7 @@ NULLABLE = {"null": True, "blank": True}  # Необязательное пол�
 
 
 class User(AbstractUser):
-
+    username = None
     email = models.EmailField(
         unique=True, verbose_name="Почта", help_text="Адрес электронной почты"
     )
@@ -29,9 +29,7 @@ class User(AbstractUser):
     )
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = [
-        "username"
-    ]  # Поля, обязательные для заполнения при создании пользователя
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
