@@ -8,6 +8,8 @@ class IsOwnerOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Все могут читать (GET), но только владелец может изменять (PUT, PATCH, DELETE)
-        if request.method in ('GET',):
+        if request.method in ("GET",):
             return True
-        return obj.owner == request.user  # Проверка, что пользователь — владелец объекта
+        return (
+            obj.owner == request.user
+        )  # Проверка, что пользователь — владелец объекта

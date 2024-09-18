@@ -14,6 +14,7 @@ class CourseViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)  # Привязываем курс к пользователю
+
     def get_permissions(self):
         if self.action in ["create", "destroy"]:
             # Запрещаем модераторам создавать и удалять курсы
@@ -30,7 +31,7 @@ class CourseViewSet(ModelViewSet):
 class LessonViewSet(viewsets.ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly] # Для уроков
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]  # Для уроков
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)  # Привязываем урок к пользователю
@@ -60,9 +61,12 @@ class IsOwnerOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Все могут читать (GET), но только владелец может изменять (PUT, PATCH, DELETE)
-        if request.method in ('GET',):
+        if request.method in ("GET",):
             return True
-        return obj.owner == request.user  # Проверка, что пользователь — владелец объекта
+        return (
+            obj.owner == request.user
+        )  # Проверка, что пользователь — владелец объекта
+
 
 class CourseCreateAPIView(generics.CreateAPIView):
     queryset = Course.objects.all()
