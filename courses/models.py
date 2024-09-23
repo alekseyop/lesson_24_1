@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from courses.validators import validate_youtube_link
@@ -21,7 +22,7 @@ class Course(models.Model):
         upload_to="course_previews/",
         **NULLABLE,
         verbose_name="Превью курса",
-        help_text="Загрузите превью курса"
+        help_text="Загрузите превью курса",
     )
     description = models.TextField(
         **NULLABLE, verbose_name="Описание курса", help_text="Укажите описание курса"
@@ -55,13 +56,13 @@ class Lesson(models.Model):
         upload_to="lesson_previews/",
         **NULLABLE,
         verbose_name="Превью лекции",
-        help_text="Загрузите превью лекции"
+        help_text="Загрузите превью лекции",
     )
     video_url = models.URLField(
         validators=[validate_youtube_link],
         **NULLABLE,
         verbose_name="Видео",
-        help_text="Укажите видео"
+        help_text="Укажите видео",
     )
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, verbose_name="Курс", help_text="Выберите курс"
@@ -73,3 +74,16 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = "Лекция"
         verbose_name_plural = "Лекции"
+
+
+class CourseSubscription(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="subscriptions"
+    )
+    course = models.ForeignKey(
+        "Course", on_delete=models.CASCADE, related_name="subscriptions"
+    )
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} подписан на {self.course.title}"

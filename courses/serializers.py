@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from courses.models import Course, Lesson
-from courses.validators import validate_youtube_link, YouTubeValidator
+from courses.models import Course, Lesson, CourseSubscription
+from courses.validators import YouTubeValidator
 
 
 class LessonSerializer(ModelSerializer):
@@ -33,4 +33,17 @@ class CourseSerializer(ModelSerializer):
             "description",
             "lessons_count",
             "lessons",
+            "is_subscribed",
         ]  # Указываем новое поле в fields
+
+    def get_is_subscribed(self, obj):
+        user = self.context["request"].user
+        if user.is_authenticated:
+            return CourseSubscription.objects.filter(user=user, course=obj).exists()
+        return False
+
+
+class CourseSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseSubscription
+        fields = ["user", "course", "subscribed_at"]

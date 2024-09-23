@@ -1,5 +1,10 @@
 from .apps import CoursesConfig
-from .views import LessonListCreateView, LessonRetrieveUpdateDestroyView, LessonViewSet
+from .views import (
+    LessonListCreateView,
+    LessonRetrieveUpdateDestroyView,
+    LessonViewSet,
+    CourseSubscriptionView,
+)
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from courses.views import CourseViewSet
@@ -12,6 +17,7 @@ router.register(r"lessons", LessonViewSet)  # Регистрируем ViewSet �
 
 urlpatterns = [
     path("lessons/", LessonListCreateView.as_view(), name="lesson-list-create"),
+    path("subscribe/", CourseSubscriptionView.as_view(), name="course-subscription"),
     path(
         "lessons/<int:pk>/",
         LessonRetrieveUpdateDestroyView.as_view(),
