@@ -1,5 +1,7 @@
 from django.db import models
 
+from courses.validators import validate_youtube_link
+
 NULLABLE = {"null": True, "blank": True}  # Необязательное поле
 
 
@@ -56,7 +58,10 @@ class Lesson(models.Model):
         help_text="Загрузите превью лекции"
     )
     video_url = models.URLField(
-        **NULLABLE, verbose_name="Видео", help_text="Укажите видео"
+        validators=[validate_youtube_link],
+        **NULLABLE,
+        verbose_name="Видео",
+        help_text="Укажите видео"
     )
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, verbose_name="Курс", help_text="Выберите курс"
