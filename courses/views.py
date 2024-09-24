@@ -1,10 +1,12 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, viewsets
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from courses.models import Course, Lesson, CourseSubscription
+from courses.paginators import CourseLessonPagination
 from courses.permissions import IsOwnerOrReadOnly
 from courses.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator
@@ -110,3 +112,15 @@ class CourseSubscriptionView(APIView):
             message = "Подписка добавлена"
 
         return Response({"message": message})
+
+
+class CourseListView(ListAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    pagination_class = CourseLessonPagination
+
+
+class LessonListView(ListAPIView):
+    queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
+    pagination_class = CourseLessonPagination
