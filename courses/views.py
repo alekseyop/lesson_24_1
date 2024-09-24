@@ -1,7 +1,12 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, viewsets
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from courses.models import Course, Lesson
+from courses.models import Course, Lesson, CourseSubscription
+from courses.paginators import CourseLessonPagination
 from courses.permissions import IsOwnerOrReadOnly
 from courses.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator
@@ -84,3 +89,38 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)  # Привязываем урок к пользователю
+
+
+class CourseSubscriptionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        course_id = request.data.get("course_id")
+        course_item = get_object_or_404(Course, id=course_id)
+
+        # Проверяем, есть ли уже подписка
+        subscription = CourseSubscription.objects.filter(user=user, course=course_item)
+
+        if subscription.exists():
+            # Если подписка существует — удаляем
+            subscription.delete()
+            message = "Подписка удалена"
+        else:
+            # Если подписки нет — создаем
+            CourseSubscription.objects.create(user=user, course=course_item)
+            message = "Подписка добавлена"
+
+        return Response({"message": message})
+
+
+class CourseListView(ListAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    pagination_class = CourseLessonPagination
+
+
+class LessonListView(ListAPIView):
+    queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
+    pagination_class = CourseLessonPagination
