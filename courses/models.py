@@ -9,6 +9,7 @@ NULLABLE = {"null": True, "blank": True}  # Необязательное пол�
 class Course(models.Model):
     owner = models.ForeignKey(
         "users.User",
+        **NULLABLE,
         on_delete=models.CASCADE,
         verbose_name="Владелец курса",
         related_name="courses",
