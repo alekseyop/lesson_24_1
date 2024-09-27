@@ -14,7 +14,7 @@ class LessonSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
-    lessons_count = serializers.SerializerMethodField()  # Счетчик уроков
+    # lessons_count = serializers.SerializerMethodField()  # Счетчик уроков
 
     # Поле для вывода информации обо всех уроках
     # many=True - указываем, что мы хотим получить список уроков
@@ -22,19 +22,21 @@ class CourseSerializer(ModelSerializer):
 
     # Метод для подсчета уроков
     def get_lessons_count(self, obj):
-        return obj.lessons.count()  # Подсчет количества связанных уроков
+        # return obj.lessons.count()  # Подсчет количества связанных уроков
+        return Lesson.objects.filter(course=obj).count()
 
     class Meta:
         model = Course
-        fields = [
-            "id",
-            "title",
-            "preview",
-            "description",
-            "lessons_count",
-            "lessons",
-            "is_subscribed",
-        ]  # Указываем новое поле в fields
+        fields = "__all__"
+        # fields = [
+        #     "id",
+        #     "title",
+        #     "preview",
+        #     "description",
+        #     # "lessons_count",
+        #     "lessons",
+        #     # "is_subscribed",
+        # ]  # Указываем новое поле в fields
 
     def get_is_subscribed(self, obj):
         user = self.context["request"].user
