@@ -66,7 +66,10 @@ class Lesson(models.Model):
         help_text="Укажите видео",
     )
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, verbose_name="Курс", help_text="Выберите курс"#, related_name="lessons"
+        Course,
+        on_delete=models.CASCADE,
+        verbose_name="Курс",
+        help_text="Выберите курс",  # , related_name="lessons"
     )
 
     def __str__(self):
