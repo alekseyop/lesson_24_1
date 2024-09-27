@@ -33,6 +33,7 @@ class CourseTestCase(APITestCase):
     def test_read_lesson(self):
         # Проверяем получение урока
         self.client.force_authenticate(user=self.user)
+
         response = self.client.get(reverse('courses:lesson-detail', kwargs={'pk': self.lesson.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -50,9 +51,8 @@ class CourseTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-#  class CourseTestCase(APITestCase):
-class CourseSubscriptionTests(APITestCase):
-#  class CourseSubscriptionTests(unittest.TestCase):
+class CourseSubscriptionTestCase(APITestCase):
+
     def setUp(self):
         # Создаем тестового пользователя и курс
         self.client = APIClient()
@@ -63,7 +63,7 @@ class CourseSubscriptionTests(APITestCase):
     def test_subscribe_course(self):
         # Подписка на курс
         self.client.force_authenticate(user=self.user)
-        response = self.client.post(reverse('courses:course-subscribe', kwargs={'course_id': self.course.id}))
+        response = self.client.post(reverse('courses:course-subscription'), data={"course_id": self.course.id})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(CourseSubscription.objects.filter(user=self.user, course=self.course).exists())
 
@@ -71,6 +71,7 @@ class CourseSubscriptionTests(APITestCase):
         # Отписка от курса
         CourseSubscription.objects.create(user=self.user, course=self.course)
         self.client.force_authenticate(user=self.user)
-        response = self.client.post(reverse('courses:course-subscribe', kwargs={'course_id': self.course.id}))
+        response = self.client.post(reverse('courses:course-subscription'), data={"course_id": self.course.id})
+        # print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(CourseSubscription.objects.filter(user=self.user, course=self.course).exists())
