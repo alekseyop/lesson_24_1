@@ -12,6 +12,7 @@ from users.views import (
     PaymentStatusAPIView,
 )  # Импортируем ViewSet для пользователей
 
+
 app_name = UsersConfig.name
 
 router = DefaultRouter()
