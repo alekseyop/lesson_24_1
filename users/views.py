@@ -118,4 +118,3 @@ class PaymentCancelAPIView(APIView):
         return Response(
             {"message": "Оплата была отменена. Вы можете попробовать еще раз."}
         )
-
