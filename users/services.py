@@ -4,6 +4,7 @@ from django.conf import settings
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
+
 def create_stripe_product(name: str) -> str:
     """Создает продукт в Stripe и возвращает его ID."""
     product = stripe.Product.create(name=name)
