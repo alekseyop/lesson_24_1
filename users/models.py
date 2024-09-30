@@ -105,7 +105,7 @@ class Payment(models.Model):
     def __str__(self):
         """
         Возвращает строковое представление платежа в формате:
-        'email пользователя - сумма (способ оплаты)'.
+        'email пользователя - сумма (способ оплаты) '.
         """
         return (
             f"{self.user.email} - {self.amount} ({self.get_payment_method_display()})"
