@@ -133,8 +133,8 @@ def update_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
 
     # Обновляем поля курса
-    course.title = request.POST.get('title', course.title)
-    course.description = request.POST.get('description', course.description)
+    course.title = request.POST.get("title", course.title)
+    course.description = request.POST.get("description", course.description)
     course.save()
 
     # Получаем подписчиков на курс
