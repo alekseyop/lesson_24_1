@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, viewsets
 from rest_framework.generics import ListAPIView
@@ -10,6 +11,7 @@ from courses.paginators import CourseLessonPagination
 from courses.permissions import IsOwnerOrReadOnly
 from courses.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator
+from .tasks import send_course_update_email
 
 
 class CourseViewSet(ModelViewSet):
@@ -124,3 +126,22 @@ class LessonListView(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     pagination_class = CourseLessonPagination
+
+
+def update_course(request, course_id):
+    # Получаем курс, который нужно обновить
+    course = get_object_or_404(Course, id=course_id)
+
+    # Обновляем поля курса
+    course.title = request.POST.get("title", course.title)
+    course.description = request.POST.get("description", course.description)
+    course.save()
+
+    # Получаем подписчиков на курс
+    subscriptions = CourseSubscription.objects.filter(course=course)
+
+    # Рассылаем уведомления подписчикам
+    for subscription in subscriptions:
+        send_course_update_email.delay(subscription.user.email, course.title)
+
+    return HttpResponse("Курс обновлен, уведомления отправлены подписчикам.")

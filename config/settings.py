@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,6 +28,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "courses",
     "django_filters",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -89,7 +91,7 @@ SIMPLE_JWT = {
 }
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+# TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -102,7 +104,6 @@ STATIC_URL = "static/"
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
-
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -135,3 +136,24 @@ SIMPLE_JWT = {
 }
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+CELERY_BROKER_URL = "redis://localhost:6379"  # Redis URL
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CALERY_TASK_TASK_SERIALIZER = True
+CALERY_TASK_TIME_LIMIT = 30 * 60  # Время выполнения задачи в секундах
+CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+# CELERY_TIMEZONE = "UTC"  # Временная зона для задач
+
+CELERY_BEAT_SCHEDULE = {
+    "deactivate_inactive_users_every_day": {
+        "task": "users.tasks.deactivate_inactive_users",
+        "schedule": crontab(hour=0, minute=0),  # Запускать ежедневно в полночь
+    },
+}
+
+# Убедитесь, что временные зоны совпадают
+TIME_ZONE = "Europe/Moscow"
+# USE_TZ = True
+
+CELERY_TIMEZONE = "Europe/Moscow"
