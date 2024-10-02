@@ -103,7 +103,6 @@ STATIC_URL = "static/"
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
@@ -135,3 +134,11 @@ SIMPLE_JWT = {
 }
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+CELERY_BROKER_URL = 'redis://localhost:6379' # Redis URL
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CALERY_TASK_TASK_SERIALIZER = True
+CALERY_TASK_TIME_LIMIT = 30 * 60  # Время выполнения задачи в секундах
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+CELERY_TIMEZONE = 'UTC'  # Временная зона для задач
